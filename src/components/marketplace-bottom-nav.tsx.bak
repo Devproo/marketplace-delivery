@@ -1,0 +1,83 @@
+import { usePathname, useRouter } from 'expo-router';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { useCart } from '@/contexts/cart-context';
+
+const tabs = [
+  { icon: '⌂', label: 'Home', path: '/' },
+  { icon: '♡', label: 'Favorites', path: '/favorites' },
+  { icon: '▤', label: 'Orders', path: '/orders' },
+  { icon: '♙', label: 'Profile', path: '/profile' },
+] as const;
+
+export default function MarketplaceBottomNav() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const { itemCount } = useCart();
+
+  return (
+    <View style={styles.bottomNav}>
+      {tabs.map((tab) => {
+        const active =
+          tab.path === '/'
+            ? pathname === '/'
+            : pathname === tab.path ||
+              pathname === `/${tab.label.toLowerCase()}`;
+
+        return (
+          <Pressable
+            key={tab.label}
+            accessibilityRole='button'
+            accessibilityLabel={tab.label}
+            accessibilityState={{ selected: active }}
+            style={styles.navItem}
+            onPress={() => router.navigate(tab.path)}
+          >
+            <Text style={[styles.navIcon, active && styles.activeNavIcon]}>
+              {tab.icon}
+            </Text>
+            <Text style={[styles.navLabel, active && styles.activeNavLabel]}>
+              {tab.label}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  bottomNav: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    minHeight: 72,
+    paddingTop: 9,
+    paddingBottom: 12,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#E8EEE9',
+  },
+  navItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+  },
+  navIcon: {
+    fontSize: 23,
+    color: '#87928B',
+  },
+  activeNavIcon: {
+    color: '#27834F',
+  },
+  navLabel: {
+    fontSize: 10,
+    color: '#87928B',
+  },
+  activeNavLabel: {
+    fontWeight: '700',
+    color: '#27834F',
+  },
+});
